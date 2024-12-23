@@ -3,9 +3,7 @@
 - 리액트를 활용하여 내 최애 영화들을 소개하는 UI 제작
 
 # ✅ Project Info
-- 개발 도구 : `SpringBoot`, `MongoDB`
-- 구현 API :
-  
+- 개발 도구 : `SpringBoot`, `MongoDB`  
 
 # 📝 Commit Convention
 - add : 새로운 기능 추가
