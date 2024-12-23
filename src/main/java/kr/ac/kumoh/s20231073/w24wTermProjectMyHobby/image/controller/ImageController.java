@@ -6,6 +6,7 @@ import kr.ac.kumoh.s20231073.w24wTermProjectMyHobby.image.dto.response.ImageDeta
 import kr.ac.kumoh.s20231073.w24wTermProjectMyHobby.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,8 +42,13 @@ public class ImageController {
      * @throws IOException
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponseBody<byte[]>> getImage(@PathVariable String id) throws IOException {
-        return imageService.getImageData(id);
+    public ResponseEntity<byte[]> getImage(@PathVariable String id) throws IOException {
+        byte[] imageData = imageService.getImageData(id); // 이미지 데이터를 가져옴
+        String contentType = imageService.getImageContentType(id); // Content-Type 가져옴
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(imageData); // 순수 이미지 데이터 반환
     }
 
 

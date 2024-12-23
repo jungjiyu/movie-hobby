@@ -53,21 +53,30 @@ public class ImageService {
                 uploadDate(new Date()).build();
     }
 
-    public ResponseEntity<CustomResponseBody<byte[]>> getImageData(String id) throws IOException {
+    public byte[] getImageData(String id) throws IOException {
         GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
-        if (file == null) return ResponseEntity.notFound().build();
+        if (file == null) throw new BusinessException(ExceptionType.FILE_NOT_FOUND);
 
         try {
             GridFsResource resource = gridFsTemplate.getResource(file);
-            byte[] data = StreamUtils.copyToByteArray(resource.getInputStream());
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(file.getMetadata().get("_contentType").toString()))
-                    .body(ResponseUtil.createSuccessResponse(data));
+            return StreamUtils.copyToByteArray(resource.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException("이미지 데이터를 읽는 중 오류 발생", e);
+            throw new BusinessException(ExceptionType.FILE_NOT_FOUND);
         }
     }
+
+    public String getImageContentType(String id) {
+        GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+        if (file == null) {
+            throw new BusinessException(ExceptionType.FILE_NOT_FOUND);
+        }
+
+        return file.getMetadata() != null
+                ? file.getMetadata().get("_contentType").toString()
+                : MediaType.APPLICATION_OCTET_STREAM_VALUE;
+    }
+
+
 
 
     public List<ImageDetailResponseDto> getUploadedImagesWithDetails() {
